@@ -10,8 +10,10 @@ WIDTH, HEIGHT = 1000, 600
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("MINI GAME")
 BLUE = (0, 0, 255)
+BLACK=(0,0,0)
 FPS = 70
 velocity=10
+BORDER=pygame.Rect(WIDTH//2-5,0,10,HEIGHT)
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 60, 50
 
 # Initial positions of spaceships
@@ -21,16 +23,17 @@ yellow_x, yellow_y = 700, 300
 # Fix the paths and scale the images correctly
 def define_ships(spaceship_yellow, spaceship_red):
     YELLOW_SPACESHIP_IMAGE = pygame.image.load(os.path.join('Assets', f'{spaceship_yellow}.png'))
-    YELLOW_SPACESHIP_IMAGE = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 90)
+    YELLOW_SPACESHIP_IMAGE = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
 
     RED_SPACESHIP_IMAGE = pygame.image.load(os.path.join('Assets', f'{spaceship_red}.png'))
-    RED_SPACESHIP_IMAGE = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
+    RED_SPACESHIP_IMAGE = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), -270)
 
     return YELLOW_SPACESHIP_IMAGE, RED_SPACESHIP_IMAGE
 
 
 def drawings(YELLOW_SPACESHIP_IMAGE, RED_SPACESHIP_IMAGE):
     WIN.fill(BLUE)
+    pygame.draw.rect(WIN,BLACK,BORDER)
     WIN.blit(YELLOW_SPACESHIP_IMAGE, (yellow_x, yellow_y))
     WIN.blit(RED_SPACESHIP_IMAGE, (red_x, red_y))
     pygame.display.update()
@@ -48,28 +51,29 @@ def load_sound(sound_name):
     crash_sound = mixer.Sound(f'Assets/{sound_name}.mp3')
     return crash_sound
 
-
 def handle_red_spaceship_movement(keys_pressed):
     global red_x, red_y
-    if keys_pressed[pygame.K_a]:  # moving to the left
+
+    if keys_pressed[pygame.K_a] and red_x - velocity > 0:  # moving to the left
         red_x -= velocity
-    if keys_pressed[pygame.K_d]:  # moving to the right
+    if keys_pressed[pygame.K_d] and red_x + velocity < BORDER.x:  # moving to the right
         red_x += velocity
-    if keys_pressed[pygame.K_w]:  # moving up
+    if keys_pressed[pygame.K_w] and red_y - velocity > 0:  # moving up
         red_y -= velocity
-    if keys_pressed[pygame.K_s]:  # moving down
+    if keys_pressed[pygame.K_s] and red_y + velocity < HEIGHT:  # moving down
         red_y += velocity
 
 
 def handle_yellow_spaceship_movement(keys_pressed):
     global yellow_x, yellow_y
-    if keys_pressed[pygame.K_LEFT]:  # moving to the left
+    
+    if keys_pressed[pygame.K_LEFT] and yellow_x - velocity > 0:  # moving to the left
         yellow_x -= velocity
-    if keys_pressed[pygame.K_RIGHT]:  # moving to the right
+    if keys_pressed[pygame.K_RIGHT] and yellow_x + velocity < BORDER.x:  # moving to the right
         yellow_x += velocity
-    if keys_pressed[pygame.K_UP]:  # moving up
+    if keys_pressed[pygame.K_UP] and yellow_y - velocity > 0:  # moving up
         yellow_y -= velocity
-    if keys_pressed[pygame.K_DOWN]:  # moving down
+    if keys_pressed[pygame.K_DOWN] and yellow_y + velocity < HEIGHT:  # moving down
         yellow_y += velocity
     
     
